@@ -23,6 +23,7 @@ interface EventContextType {
   removeItineraryItem: (id: string) => void;
   // Guests
   addGuest: (guest: Guest) => void;
+  updateGuest: (id: string, updates: Partial<Guest>) => void;
   // Flow tracking
   completedStep: number;
   setCompletedStep: (step: number) => void;
@@ -114,13 +115,20 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
     setEvent(prev => ({ ...prev, guests: [...prev.guests, guest] }));
   }, []);
 
+  const updateGuest = useCallback((id: string, updates: Partial<Guest>) => {
+    setEvent(prev => ({
+      ...prev,
+      guests: prev.guests.map(g => g.id === id ? { ...g, ...updates } : g)
+    }));
+  }, []);
+
   return (
     <EventContext.Provider value={{
       event, setPosterImage, setExtractedData,
       updateEventDetail, markFieldEdited,
       addHotspot, removeHotspot, updateHotspot,
       addItineraryItem, updateItineraryItem, removeItineraryItem,
-      addGuest, completedStep, setCompletedStep,
+      addGuest, updateGuest, completedStep, setCompletedStep,
       isAnalysing, setIsAnalysing,
       showToast, triggerToast,
     }}>

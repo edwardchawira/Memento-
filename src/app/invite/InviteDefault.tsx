@@ -11,10 +11,11 @@ const HOTSPOT_LABELS: Record<HotspotType, string> = {
   selfie: "Take a Selfie", video: "Record Video", voice: "Leave Voice Note",
 };
 
-export default function GuestInvite() {
-  const { event } = useEvent();
+export default function InviteDefault() {
+  const { event, updateGuest, triggerToast } = useEvent();
   const [activeModal, setActiveModal] = useState<HotspotType | null>(null);
   const details = event.eventDetails;
+  const mockGuest = event.guests.find(g => g.id === '1');
   const posterSrc = event.posterImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuCT9RhYJ7h9Lzq05D_TneyesmfVcpd4m_-qI_rIoIsrfA6gCO6mB3vKpe_pB3VBWX8J7Mfcc7muAFBwz7furI3N_Kc-OYvVhu2izb6vE9OsYGCbTmmziKZ5-Iml4nsMn4e73qPTf1dCNLEkxXcDw8B2d1IgxMVcRkZl16PaWD_r6zz0jQI1HLOL5rqRlLUOTJiGhmAeCLBSfB4snOPVpdGIuRcvxg9bxl3NwZIxoMpluVq3Rye4DGzfQ5WuObavrgUvxkwboYWCAko";
 
   return (
@@ -43,13 +44,13 @@ export default function GuestInvite() {
 
       <div className="pb-20">
         <section className="px-4 md:px-12 max-w-5xl mx-auto mb-20 relative">
-          <div className="relative group aspect-[3/4] md:aspect-[16/9] overflow-hidden bg-[var(--color-surface-container-low)] shadow-2xl shadow-on-surface/5">
+          <div className="relative group w-fit max-w-full mx-auto overflow-hidden bg-[var(--color-surface-container-low)] shadow-2xl shadow-on-surface/5 flex justify-center items-center">
             <img
               alt="Event Poster"
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-[85vh] h-auto block"
               src={posterSrc}
             />
-            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 bg-gradient-to-t from-[#1b1c18]/60 to-transparent">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 bg-gradient-to-t from-[var(--color-on-surface)]/60 to-transparent">
               <h1 className="font-headline text-4xl md:text-7xl text-white mb-2 leading-tight tracking-tight">{details.eventName || "The Midsummer"} <br/>Gathering</h1>
               <p className="font-body text-white/90 uppercase tracking-[0.3em] text-xs md:text-sm">{details.dateTime || "August 24th, 2024"} • {details.location || "Provence, FR"}</p>
             </div>
@@ -87,22 +88,52 @@ export default function GuestInvite() {
           <span className="font-label uppercase tracking-[0.2em] text-xs text-[var(--color-secondary)] mb-4 block">Will you join us?</span>
           <h2 className="font-headline text-3xl md:text-5xl mb-12 text-[var(--color-primary)]">Kindly Respond</h2>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch md:items-center">
-            <button className="cursor-pointer border-none px-8 py-5 bg-gradient-to-br from-[#735c00] to-[#d4af37] text-white font-label uppercase tracking-widest text-sm hover:opacity-90 transition-all active:scale-95">
+            <button 
+              onClick={() => { updateGuest('1', { status: 'attending' }); triggerToast("We're thrilled you can make it!"); }}
+              className={mockGuest?.status === 'attending' 
+                ? "cursor-pointer border-none px-8 py-5 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-label uppercase tracking-widest text-sm shadow-xl scale-105 transition-all"
+                : "cursor-pointer px-8 py-5 border border-[var(--color-outline-variant)]/40 font-label uppercase tracking-widest text-sm text-[var(--color-on-surface)] hover:bg-[var(--color-primary)]/5 transition-all bg-transparent"}
+            >
               Attending
             </button>
-            <button className="cursor-pointer px-8 py-5 border border-[var(--color-outline-variant)]/40 font-headline italic text-lg text-[var(--color-on-surface)] hover:bg-[var(--color-primary)]/5 transition-all bg-transparent">
+            <button 
+              onClick={() => { updateGuest('1', { status: 'pending' }); triggerToast("We hope you can make it!"); }}
+              className={mockGuest?.status === 'pending'
+                ? "cursor-pointer border-none px-8 py-5 bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface)] font-headline italic text-lg shadow-md scale-105 transition-all"
+                : "cursor-pointer px-8 py-5 border border-[var(--color-outline-variant)]/40 font-headline italic text-lg text-[var(--color-on-surface)] hover:bg-[var(--color-primary)]/5 transition-all bg-transparent"}
+            >
               Maybe
             </button>
-            <button className="cursor-pointer px-8 py-5 border border-[var(--color-outline-variant)]/40 font-label uppercase tracking-widest text-sm text-[var(--color-on-surface)]/60 hover:text-[var(--color-error)] transition-all bg-transparent">
+            <button 
+              onClick={() => { updateGuest('1', { status: 'declined' }); triggerToast("Sorry you can't join us."); }}
+              className={mockGuest?.status === 'declined'
+                ? "cursor-pointer border-none px-8 py-5 bg-red-100 text-red-700 font-label uppercase tracking-widest text-sm shadow-md scale-105 transition-all"
+                : "cursor-pointer px-8 py-5 border border-[var(--color-outline-variant)]/40 font-label uppercase tracking-widest text-sm text-[var(--color-on-surface)]/60 hover:text-[var(--color-error)] transition-all bg-transparent"}
+            >
               Not Attending
             </button>
           </div>
           
           <div className="mt-16 p-8 bg-[var(--color-surface-container-high)] flex flex-col items-center gap-4">
             <span className="font-label uppercase tracking-widest text-xs text-[var(--color-on-surface)]/40">Day of the event</span>
-            <button className="cursor-pointer flex items-center gap-3 px-6 py-3 bg-white border border-[var(--color-outline-variant)]/20 shadow-sm rounded-full text-[var(--color-secondary)] hover:shadow-md transition-all">
-              <span className="material-symbols-outlined text-[var(--color-primary)]">check_circle</span>
-              <span className="font-label text-sm font-semibold tracking-wider uppercase">Tap to Check-In</span>
+            <button 
+              onClick={() => {
+                if (mockGuest?.checkedInAt) {
+                  triggerToast("You are already checked in.");
+                } else {
+                  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  updateGuest('1', { checkedInAt: time });
+                  triggerToast("Checked in successfully!");
+                }
+              }}
+              className={mockGuest?.checkedInAt 
+                ? "cursor-pointer flex items-center gap-3 px-6 py-3 bg-[var(--color-primary)] text-white border-none shadow-md rounded-full transition-all"
+                : "cursor-pointer flex items-center gap-3 px-6 py-3 bg-white border border-[var(--color-outline-variant)]/20 shadow-sm rounded-full text-[var(--color-secondary)] hover:shadow-md transition-all"}
+            >
+              <span className="material-symbols-outlined text-[var(--color-primary)]" style={mockGuest?.checkedInAt ? { color: "white" } : {}}>check_circle</span>
+              <span className="font-label text-sm font-semibold tracking-wider uppercase">
+                {mockGuest?.checkedInAt ? `Checked in at ${mockGuest.checkedInAt}` : "Tap to Check-In"}
+              </span>
             </button>
           </div>
         </section>
@@ -176,20 +207,20 @@ export default function GuestInvite() {
       </div>
 
       {/* Bottom Nav Bar (Mobile Only) */}
-      <nav className="md:hidden fixed bottom-0 w-full bg-[#fbf9f2]/95 backdrop-blur-lg flex justify-around items-center py-4 px-2 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[#70615c] cursor-pointer">
+      <nav className="md:hidden fixed bottom-0 w-full bg-[var(--color-surface)]/95 backdrop-blur-lg flex justify-around items-center py-4 px-2 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[var(--color-secondary)] cursor-pointer">
           <span className="material-symbols-outlined text-2xl">auto_stories</span>
           <span className="text-[9px] font-label uppercase tracking-widest">Story</span>
         </button>
-        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[#70615c] cursor-pointer">
+        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[var(--color-secondary)] cursor-pointer">
           <span className="material-symbols-outlined text-2xl">calendar_month</span>
           <span className="text-[9px] font-label uppercase tracking-widest">Itinerary</span>
         </button>
-        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[#735c00] cursor-pointer">
+        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[var(--color-primary)] cursor-pointer">
           <span className="material-symbols-outlined text-2xl" style={{fontVariationSettings: "'FILL' 1"}}>mail</span>
           <span className="text-[9px] font-label uppercase tracking-widest">RSVP</span>
         </button>
-        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[#70615c] cursor-pointer">
+        <button className="bg-transparent border-none flex flex-col items-center gap-1 text-[var(--color-secondary)] cursor-pointer">
           <span className="material-symbols-outlined text-2xl">photo_library</span>
           <span className="text-[9px] font-label uppercase tracking-widest">Memories</span>
         </button>

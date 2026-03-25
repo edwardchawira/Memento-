@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEvent } from "@/context/EventContext";
 import { ItineraryItem } from "@/lib/eventTypes";
 
-export default function AtelierDashboard() {
+export default function DashboardDefault() {
   const {
     event, updateEventDetail, markFieldEdited,
     addItineraryItem, updateItineraryItem, removeItineraryItem,
@@ -45,7 +45,7 @@ export default function AtelierDashboard() {
     <>
       {/* Toast */}
       {showToast && (
-        <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[100] px-8 py-3 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white font-label text-sm uppercase tracking-widest rounded-sm shadow-2xl animate-[fadeInDown_0.3s_ease]">
+        <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[100] px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-label text-sm uppercase tracking-widest rounded-sm shadow-2xl animate-[fadeInDown_0.3s_ease]">
           {showToast}
         </div>
       )}
@@ -125,7 +125,7 @@ export default function AtelierDashboard() {
 
               <button
                 onClick={handleSaveDetails}
-                className="w-full py-4 bg-gradient-to-br from-[#735c00] to-[#d4af37] text-white font-label text-sm uppercase tracking-[0.2em] border-none cursor-pointer hover:brightness-110 transition-all shadow-lg"
+                className="w-full py-4 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-label text-sm uppercase tracking-[0.2em] border-none cursor-pointer hover:brightness-110 transition-all shadow-lg"
               >
                 Save Changes
               </button>
@@ -198,7 +198,7 @@ export default function AtelierDashboard() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setEditDrawerOpen(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[#735c00] to-[#d4af37] text-white font-label text-xs uppercase tracking-widest border-none cursor-pointer hover:brightness-110 transition-all shadow-lg rounded-sm"
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-label text-xs uppercase tracking-widest border-none cursor-pointer hover:brightness-110 transition-all shadow-lg rounded-sm"
             >
               <span className="material-symbols-outlined text-sm">edit_note</span>
               Edit Event Details

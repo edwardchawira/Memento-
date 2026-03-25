@@ -78,7 +78,7 @@ export const defaultEvent: MementoEvent = {
     { id: '2', time: '21:15 PM', title: 'First Dance', description: 'Ballroom floor. Song: "At Last" by Etta James.', isActive: false },
   ],
   guests: [
-    { id: '1', name: 'Julianne Moore', email: 'julianne@mail.com', status: 'attending', checkedInAt: '19:42 PM', uploads: 12 },
+    { id: '1', name: 'Julianne Moore', email: 'julianne@mail.com', status: 'pending', checkedInAt: null, uploads: 12 },
     { id: '2', name: 'Sterling Archer', email: 'sterling@mail.com', status: 'late', checkedInAt: null, uploads: 0 },
     { id: '3', name: 'Sofia Coppola', email: 'sofia@mail.com', status: 'attending', checkedInAt: '18:15 PM', uploads: 34 },
   ],

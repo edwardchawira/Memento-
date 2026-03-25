@@ -13,7 +13,7 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       <link href={theme.fontUrl} rel="stylesheet" precedence="default" crossOrigin="anonymous" />
-      <body className={cn("min-h-screen flex flex-col pt-24 transition-colors duration-500", theme.classes.body, theme.fontBody)}>
+      <body className={cn("min-h-screen flex flex-col pt-24 transition-colors duration-500 bg-[var(--color-surface)] text-[var(--color-on-surface)]", theme.fontBody)}>
         <NavBar />
         <main className="flex-grow flex flex-col">
           {children}

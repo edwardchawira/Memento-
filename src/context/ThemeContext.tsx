@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeType } from '@/lib/themeMapping';
+import { themeVariables } from '@/lib/themeVariables';
 
 interface ThemeContextType {
   activeTheme: ThemeType;
@@ -42,8 +43,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return <ThemeContext.Provider value={{ activeTheme: 'ATELIER', setTheme: () => {} }}>{children}</ThemeContext.Provider>;
   }
 
+  const varsStr = Object.entries(themeVariables[activeTheme])
+    .map(([k, v]) => `${k}: ${v};`)
+    .join('\n');
+
   return (
     <ThemeContext.Provider value={{ activeTheme, setTheme: changeTheme }}>
+      <style dangerouslySetInnerHTML={{ __html: `:root { ${varsStr} }` }} />
       {children}
     </ThemeContext.Provider>
   );

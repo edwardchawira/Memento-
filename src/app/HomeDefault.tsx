@@ -13,7 +13,7 @@ const HOTSPOT_META: Record<HotspotType, { icon: string; label: string }> = {
   voice: { icon: "mic", label: "Voice Note" },
 };
 
-export default function HomeAtelier() {
+export default function HomeDefault() {
   const { activeTheme, setTheme } = useTheme();
   const theme = getTheme(activeTheme);
   const {
@@ -156,7 +156,7 @@ export default function HomeAtelier() {
   const stepLabelClass = (step: number) =>
     cn(
       "font-label text-sm uppercase tracking-[0.3em] text-[var(--color-primary)] mb-4 block transition-all duration-700",
-      highlightStep === step && "scale-110 text-[#d4af37] drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]"
+      highlightStep === step && "scale-110 text-[var(--color-primary-container)] drop-shadow-md"
     );
 
   return (
@@ -164,7 +164,7 @@ export default function HomeAtelier() {
       <div className="w-full">
         {/* Toast */}
         {showToast && (
-          <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[100] px-8 py-3 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white font-label text-sm uppercase tracking-widest rounded-sm shadow-2xl animate-[fadeInDown_0.3s_ease]">
+          <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[100] px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-label text-sm uppercase tracking-widest rounded-sm shadow-2xl animate-[fadeInDown_0.3s_ease]">
             {showToast}
           </div>
         )}
@@ -234,13 +234,13 @@ export default function HomeAtelier() {
                     <p className="font-headline text-xl text-[var(--color-primary)] mb-2">Analysing your invite…</p>
                     <p className="text-sm text-[var(--color-secondary)]">AI is reading your poster</p>
                     <div className="mt-6 w-48 h-1 bg-[var(--color-surface-container-high)] rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#735c00] to-[#d4af37] rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" style={{width: '60%'}}></div>
+                      <div className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] rounded-full animate-[shimmer_1.5s_ease-in-out_infinite]" style={{width: '60%'}}></div>
                     </div>
                   </div>
                 ) : event.posterImage ? (
                   /* Uploaded Poster Preview */
-                  <div className="aspect-[3/4] overflow-hidden shadow-2xl relative">
-                    <img src={event.posterImage} alt="Uploaded poster" className="w-full h-full object-cover" />
+                  <div className="w-fit max-w-full mx-auto relative shadow-2xl border border-[var(--color-outline-variant)]/40 bg-[var(--color-surface)] flex justify-center items-center">
+                    <img src={event.posterImage} alt="Uploaded poster" className="max-w-full max-h-[60vh] h-auto block" />
                     <div className="absolute top-4 right-4 px-3 py-1 bg-[var(--color-primary)]/90 text-white font-label text-[10px] uppercase tracking-widest rounded-sm">
                       ✓ Uploaded
                     </div>
@@ -277,7 +277,7 @@ export default function HomeAtelier() {
                 <div className="flex flex-col border-b border-[var(--color-outline-variant)] py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)]">Event Name</label>
-                    {isAiFilled("eventName") && <span className="px-2 py-0.5 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
+                    {isAiFilled("eventName") && <span className="px-2 py-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
                   </div>
                   <input
                     className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none font-headline text-2xl placeholder:text-[var(--color-outline-variant)]/60"
@@ -305,7 +305,7 @@ export default function HomeAtelier() {
                 <div className="flex flex-col border-b border-[var(--color-outline-variant)] py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)]">Date &amp; Time</label>
-                    {isAiFilled("dateTime") && <span className="px-2 py-0.5 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
+                    {isAiFilled("dateTime") && <span className="px-2 py-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
                   </div>
                   <input
                     className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none font-headline text-2xl placeholder:text-[var(--color-outline-variant)]/60"
@@ -319,7 +319,7 @@ export default function HomeAtelier() {
                 <div className="flex flex-col border-b border-[var(--color-outline-variant)] py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)]">Location</label>
-                    {isAiFilled("location") && <span className="px-2 py-0.5 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
+                    {isAiFilled("location") && <span className="px-2 py-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
                   </div>
                   <input
                     className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none font-headline text-2xl placeholder:text-[var(--color-outline-variant)]/60"
@@ -333,7 +333,7 @@ export default function HomeAtelier() {
                 <div className="flex flex-col border-b border-[var(--color-outline-variant)] py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)]">RSVP Deadline</label>
-                    {isAiFilled("rsvpDeadline") && <span className="px-2 py-0.5 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
+                    {isAiFilled("rsvpDeadline") && <span className="px-2 py-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
                   </div>
                   <input
                     className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none font-headline text-2xl placeholder:text-[var(--color-outline-variant)]/60"
@@ -347,7 +347,7 @@ export default function HomeAtelier() {
                 <div className="flex flex-col border-b border-[var(--color-outline-variant)] py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)]">Dress Code</label>
-                    {isAiFilled("dressCode") && <span className="px-2 py-0.5 bg-gradient-to-r from-[#735c00] to-[#d4af37] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
+                    {isAiFilled("dressCode") && <span className="px-2 py-0.5 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] text-white text-[9px] font-label uppercase tracking-widest rounded-sm">AI filled</span>}
                   </div>
                   <input
                     className="bg-transparent border-none p-0 focus:ring-0 focus:outline-none font-headline text-2xl placeholder:text-[var(--color-outline-variant)]/60"
@@ -382,12 +382,12 @@ export default function HomeAtelier() {
                   {/* Poster Canvas with Hotspots */}
                   <div
                     ref={posterCanvasRef}
-                    className="max-w-[400px] mx-auto aspect-[3/4] relative shadow-2xl overflow-hidden"
+                    className="w-fit max-w-[400px] mx-auto relative shadow-2xl overflow-hidden border border-[var(--color-outline-variant)]/20"
                     onDragOver={handlePosterDragOver}
                     onDrop={handlePosterDrop}
                   >
                     <img
-                      className="w-full h-full object-cover"
+                      className="max-w-full h-auto block"
                       alt="event poster"
                       src={event.posterImage || "https://lh3.googleusercontent.com/aida-public/AB6AXuBU4lE7nuHDEUNMrpp8qHAkLZjLRw6KEHSmkGIfbeMp7cAqJr0Y7e7WYmr3jk7y2jq4BbVJwKA6XOIvFBpR4zbjwuhAZ_82LWLEPBXI8MQ_Y6yrBSUlgi1wGGQtecw7gZeIsWI2FbPc4OxML87ouw5jRkEtF7YYmt2meujIzLtq7_lziCrwSwtyIkkNT81sFWj8owvcy3GYu2VdElbqvk34fyb2hC8MlNkUX5vZn7iaZthOP2_Rih2hRcVF5xSevLlOk1Nzfq7hOaA"}
                     />
