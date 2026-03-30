@@ -1,3 +1,19 @@
+# Memento
+
+Digital memory booklet: host onboarding, guest invites, and themed UI (Atelier / Conference). Event data is kept in browser context for local demos.
+
+## Environment variables
+
+Optional — for real poster analysis with OpenAI, create `.env.local`:
+
+```env
+OPENAI_API_KEY=
+```
+
+If `OPENAI_API_KEY` is unset, `/api/analyze-poster` returns demo placeholder data so the flow still works.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

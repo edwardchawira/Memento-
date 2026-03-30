@@ -21,12 +21,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (saved) setActiveTheme(saved);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+    const vars = themeVariables[activeTheme];
+    for (const [k, v] of Object.entries(vars)) {
+      document.documentElement.style.setProperty(k, v);
+    }
+  }, [activeTheme, mounted]);
+
   const changeTheme = async (theme: ThemeType) => {
     setActiveTheme(theme);
     localStorage.setItem('memento_theme', theme);
 
     // Mock Backend POST update
-    console.log(`[POST] /api/events/theme - Update event theme to ${theme}`);
+    console.log(`[POST] /api/theme - Update event theme to ${theme}`);
     try {
       await fetch('/api/theme', { 
         method: 'POST', 
@@ -43,13 +51,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return <ThemeContext.Provider value={{ activeTheme: 'ATELIER', setTheme: () => {} }}>{children}</ThemeContext.Provider>;
   }
 
-  const varsStr = Object.entries(themeVariables[activeTheme])
-    .map(([k, v]) => `${k}: ${v};`)
-    .join('\n');
-
   return (
     <ThemeContext.Provider value={{ activeTheme, setTheme: changeTheme }}>
-      <style dangerouslySetInnerHTML={{ __html: `:root { ${varsStr} }` }} />
       {children}
     </ThemeContext.Provider>
   );

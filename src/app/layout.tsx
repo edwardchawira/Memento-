@@ -20,9 +20,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <Providers>
-        {children}
-      </Providers>
+      <body className="min-h-screen flex flex-col pt-24 transition-colors duration-500 bg-[var(--color-surface)] text-[var(--color-on-surface)]">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -25,27 +25,31 @@ export const themeDefinitions: Record<ThemeType, any> = {
       surfaceAlt: "bg-[#f1efe6]",
       borderAccent: "border-[#d4af37]/40",
       hotspotIcon: "text-[#735c00]",
-      hotspotContainer: "bg-white/20 border-white/40 group-hover:bg-white group-hover:text-[#735c00]"
+      hotspotContainer: "bg-white/20 border-white/40 group-hover:bg-white group-hover:text-[#735c00]",
+      textMuted: "text-[#70615c]/60",
     }
   },
+  /** Stitch "Memento Summit" — exact tokens from assets/4f02613b68334037a398ab43ad1932e8 */
   CONFERENCE: {
-    fontUrl: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    fontUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Manrope:wght@400;500;600&display=swap",
     fontHeadline: "font-sans font-bold",
     fontBody: "font-sans",
-    uiShape: "rounded-md",
+    uiShape: "rounded-sm",
     classes: {
-      body: "bg-[#0b1326] text-slate-300",
-      nav: "bg-[#0b1326]/90 border-b border-[#2e5bff]/20 shadow-none",
-      navLogo: "text-[#2e5bff] font-sans font-bold uppercase tracking-widest",
-      navLink: "text-slate-400 hover:text-white",
-      navLinkActive: "text-white border-[#2e5bff]",
-      primaryText: "text-[#2e5bff]",
-      heroPrimaryBtn: "bg-[#2e5bff] hover:bg-blue-600 text-white font-sans font-semibold tracking-wide",
-      surface: "bg-[#131d38]",
-      surfaceAlt: "bg-[#0b1326]",
+      body: "bg-[#0b1326] text-[#dae2fd]",
+      // glassmorphism nav from Stitch export
+      nav: "bg-[#0b1326]/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(6,14,32,0.4)]",
+      navLogo: "text-[#dae2fd] font-black tracking-tighter font-sans",
+      navLink: "text-[#dae2fd]/60 hover:text-[#dae2fd]",
+      navLinkActive: "text-[#b8c3ff] border-[#2e5bff]",
+      primaryText: "text-[#b8c3ff]",
+      heroPrimaryBtn: "bg-gradient-to-br from-[#2e5bff] to-[#b8c3ff] text-[#efefff] font-bold tracking-widest uppercase",
+      surface: "bg-[#131b2e]",
+      surfaceAlt: "bg-[#060e20]",
       borderAccent: "border-[#2e5bff]/40",
-      hotspotIcon: "text-[#2e5bff]",
-      hotspotContainer: "bg-blue-900/40 border-blue-500/40 group-hover:bg-[#2e5bff] group-hover:text-white"
+      hotspotIcon: "text-[#b8c3ff]",
+      hotspotContainer: "bg-[#2d3449]/40 border-[#434656]/40 group-hover:bg-[#2e5bff] group-hover:text-[#efefff]",
+      textMuted: "text-[#dae2fd]/40",
     }
   },
   JUBILEE: {
@@ -65,7 +69,8 @@ export const themeDefinitions: Record<ThemeType, any> = {
       surfaceAlt: "bg-[#210219]",
       borderAccent: "border-[#ff2e97]/30",
       hotspotIcon: "text-[#ff2e97]",
-      hotspotContainer: "bg-[#ff2e97]/20 border-[#ff2e97]/40 group-hover:bg-[#ff2e97] group-hover:text-white"
+      hotspotContainer: "bg-[#ff2e97]/20 border-[#ff2e97]/40 group-hover:bg-[#ff2e97] group-hover:text-white",
+      textMuted: "text-[#ff88b5]/60",
     }
   },
   REVEAL: {
@@ -85,7 +90,8 @@ export const themeDefinitions: Record<ThemeType, any> = {
       surfaceAlt: "bg-[#f3f3f3]",
       borderAccent: "border-[#aec6cf]/50",
       hotspotIcon: "text-[#aec6cf]",
-      hotspotContainer: "bg-white/70 border-white/20 backdrop-blur-md group-hover:scale-95 transition-transform"
+      hotspotContainer: "bg-white/70 border-white/20 backdrop-blur-md group-hover:scale-95 transition-transform",
+      textMuted: "text-[#42484a]/60",
     }
   }
 };

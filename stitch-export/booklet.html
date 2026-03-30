@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Memento | Future Horizons Summit Digital Journal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=Manrope:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed": "#001356",
+              "secondary-fixed-dim": "#bec6e0",
+              "surface-container-high": "#222a3d",
+              "secondary-fixed": "#dae2fd",
+              "primary-container": "#2e5bff",
+              "surface-variant": "#2d3449",
+              "tertiary-fixed": "#6ffbbe",
+              "on-primary": "#002388",
+              "primary": "#b8c3ff",
+              "outline": "#8e90a2",
+              "on-tertiary-fixed": "#002113",
+              "inverse-on-surface": "#283044",
+              "on-secondary-container": "#adb4ce",
+              "surface": "#0b1326",
+              "secondary": "#bec6e0",
+              "tertiary-container": "#007d55",
+              "error": "#ffb4ab",
+              "primary-fixed-dim": "#b8c3ff",
+              "surface-container": "#171f33",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#4edea3",
+              "outline-variant": "#434656",
+              "on-secondary-fixed-variant": "#3f465c",
+              "tertiary": "#4edea3",
+              "surface-bright": "#31394d",
+              "surface-dim": "#0b1326",
+              "on-secondary-fixed": "#131b2e",
+              "on-tertiary-fixed-variant": "#005236",
+              "inverse-primary": "#124af0",
+              "error-container": "#93000a",
+              "primary-fixed": "#dde1ff",
+              "surface-tint": "#b8c3ff",
+              "inverse-surface": "#dae2fd",
+              "on-background": "#dae2fd",
+              "surface-container-lowest": "#060e20",
+              "secondary-container": "#3f465c",
+              "background": "#0b1326",
+              "on-tertiary": "#003824",
+              "on-secondary": "#283044",
+              "surface-container-low": "#131b2e",
+              "on-surface": "#dae2fd",
+              "surface-container-highest": "#2d3449",
+              "on-tertiary-container": "#bdffdb",
+              "on-error": "#690005",
+              "on-primary-fixed-variant": "#0035be",
+              "on-surface-variant": "#c4c5d9",
+              "on-primary-container": "#efefff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Manrope"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .page-fold {
+            background: linear-gradient(90deg, transparent 95%, rgba(6, 14, 32, 0.4) 100%);
+        }
+        .spine-gradient {
+            background: linear-gradient(90deg, rgba(6, 14, 32, 0.5) 0%, transparent 5%, transparent 95%, rgba(6, 14, 32, 0.5) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(6,14,32,0.4)]">
+<div class="flex justify-between items-center px-8 h-20 w-full max-w-[1440px] mx-auto">
+<div class="text-2xl font-black tracking-tighter text-[#dae2fd] font-headline">Memento</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-headline font-bold tracking-tight uppercase text-xs text-[#dae2fd]/60 hover:text-[#dae2fd] transition-colors" href="#">Schedule</a>
+<a class="font-headline font-bold tracking-tight uppercase text-xs text-[#dae2fd]/60 hover:text-[#dae2fd] transition-colors" href="#">Speakers</a>
+<a class="font-headline font-bold tracking-tight uppercase text-xs text-[#dae2fd]/60 hover:text-[#dae2fd] transition-colors" href="#">Partners</a>
+<a class="font-headline font-bold tracking-tight uppercase text-xs text-[#b8c3ff] border-b-2 border-[#2e5bff] pb-1 transition-all" href="#">Dashboard</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-[#31394d]/50 p-2 rounded transition-all active:scale-95 duration-200">account_circle</span>
+<button class="bg-primary-container text-on-primary-container px-5 py-2 font-headline font-bold uppercase text-xs tracking-widest active:scale-95 duration-200">Register Now</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 md:px-12 max-w-[1600px] mx-auto">
+<!-- Header Section -->
+<header class="mb-16">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-2xl">
+<p class="font-headline text-xs font-bold uppercase tracking-[0.3em] text-primary mb-4">Innovation Journal // 2024 Edition</p>
+<h1 class="font-headline text-5xl md:text-7xl font-black text-on-surface tracking-tighter leading-tight">Future Horizons<br/><span class="text-outline-variant/40 italic">Summit Report</span></h1>
+</div>
+<div class="flex items-center gap-4 text-outline-variant border-l border-outline-variant/30 pl-8 h-fit py-2">
+<div class="text-right">
+<span class="block text-xs uppercase tracking-widest font-headline">Volume 04</span>
+<span class="block text-sm font-semibold text-on-surface">Berlin, DE</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Digital Booklet Spread -->
+<section class="relative grid grid-cols-1 lg:grid-cols-2 bg-surface-container-low shadow-[0_40px_80px_rgba(6,14,32,0.6)] min-h-[800px] overflow-hidden">
+<!-- Spine Indicator (Visual Anchor) -->
+<div class="absolute left-1/2 top-0 bottom-0 w-[1px] bg-outline-variant/10 z-20 hidden lg:block"></div>
+<div class="absolute left-1/2 top-0 bottom-0 w-8 -translate-x-1/2 spine-gradient z-10 hidden lg:block"></div>
+<!-- Left Page: Attendee Profile & Contribution -->
+<div class="relative p-12 md:p-16 border-r border-outline-variant/5">
+<div class="absolute top-8 left-12 font-headline text-[10px] tracking-[0.4em] text-outline-variant/50 uppercase">Contributor Folio // 082</div>
+<div class="mt-12">
+<div class="flex items-start gap-8 mb-16">
+<div class="w-32 h-40 bg-surface-container-highest overflow-hidden relative">
+<img class="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 transition-all duration-500" data-alt="high-contrast professional black and white studio portrait of a technology executive with sharp lighting and dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQqF9BPVvj8THoM7JGqwNlWfSwVkh_8Kgb8DWuaOgcXVmEYHgXb54BXa8GZcpPjCIsFooXp4Gdts7YBOCsYr3kCDEsVek_QdppaaP4WkevTQZ6OMq8CAhxruB8n7Rwqw5KqpI6b86IHRfrLYb7v8MugUiOqNyAP-c0nvWbIUF59hlM0tQ1hdjNWs_1IkZxj8a8tSKD957JGYykW6F0Hdj7F3c5yJJPAqMCz_9KAvo5PpTE3MOCNwsozK-NhnbfUIl9Q_vTxt5sa8A"/>
+</div>
+<div class="flex-1">
+<h2 class="font-headline text-3xl font-black tracking-tight text-on-surface mb-2">Dr. Elena Vance</h2>
+<p class="text-primary font-medium tracking-wide mb-6">Director of Cognitive Systems @ NeuralCore</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary text-[10px] font-headline font-bold uppercase tracking-widest border border-outline-variant/20">AI Policy</span>
+<span class="px-3 py-1 bg-secondary-container/30 text-secondary text-[10px] font-headline font-bold uppercase tracking-widest border border-outline-variant/20">Human-Centric Design</span>
+</div>
+</div>
+</div>
+<div class="space-y-12">
+<div>
+<span class="material-symbols-outlined text-primary-container text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+<blockquote class="font-headline text-2xl font-bold leading-snug text-on-surface tracking-tight">
+                                "The future of horizons isn't defined by the distance we can travel, but by the depth of the integration between biological intuition and synthetic precision."
+                            </blockquote>
+</div>
+<div class="grid grid-cols-2 gap-8 border-t border-outline-variant/10 pt-8">
+<div>
+<h4 class="font-headline text-[10px] font-black uppercase tracking-widest text-outline-variant mb-4">Core Takeaway</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Infrastructure must become invisible. We discussed how silent automation enables loud innovation.</p>
+</div>
+<div>
+<h4 class="font-headline text-[10px] font-black uppercase tracking-widest text-outline-variant mb-4">Networking Note</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">Connected with the Quantum Logic team on ethics. Collaboration scheduled for Q3.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Page: Visual Highlights & Session Data -->
+<div class="relative bg-surface p-12 md:p-16 flex flex-col justify-between">
+<div class="absolute top-8 right-12 font-headline text-[10px] tracking-[0.4em] text-outline-variant/50 uppercase">Session Artifacts // Future Horizons</div>
+<div class="mt-12 space-y-12">
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-12 md:col-span-7 aspect-[4/3] bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="dramatic wide shot of a modern conference stage with electric cobalt lighting and holographic displays during a keynote presentation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6JIahaD35jIKcPQmWNP1HOSW92BU50N9XBFYEhVC5GwJffsF-cn-ng89_ZV2c9TdcXxH5rEeZFKY-nqb6M9SRRCgbKw2SPjORFap2Woe0xB6BapoKJSMzzm5TpxLiNa5KMUX8WcxVPePFhaBpVHu6AbwlDESUyJLE22bT25ab8JLiRV6tLO0BJ9sr1dQp9VTGjES9_pqohzsCepMvdMasy6i1KT91LF3DIQNg2FC6TOoJmo4H7sBa14aFCTBPcpwv3inkabxk2WM"/>
+</div>
+<div class="col-span-12 md:col-span-5 flex flex-col gap-4">
+<div class="flex-1 bg-primary-container p-6 flex flex-col justify-end">
+<span class="text-[10px] font-headline font-black text-on-primary-container uppercase tracking-widest mb-1">Session 03</span>
+<h3 class="text-xl font-headline font-black text-on-primary-container leading-none">The Neural Bridge</h3>
+</div>
+<div class="h-32 bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover opacity-60" data-alt="candid shot of diverse professionals in a sleek corporate lounge discussing technology over coffee with soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfmYYQoQh7z2ba37vid06rKGCsjwQ1YwzYl4Cm5WnNSk8TB3qNsdHAl0XGaW8OqEgUaUIN8tFL28bhATDTh6WtZsbKY5d0CqoHGGrabLg-bhoIlap16D28fH1DRSr3_yHQPUnclHwRAFT2v5asBMMx2B4X2wKdVdiix7bOO2Wm5pA2yN6p3MAL29nfC4XNGVklPjbc03oT06p6Le3b27c8cXUhmVH3DX4wfe_WL4dGvb0Q4Fv5PYe6wCK2fgpYzakZ03I5wtVhHKg"/>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-4">
+<h4 class="font-headline font-black text-on-surface">Insight Frequency</h4>
+<span class="text-xs font-label text-primary uppercase tracking-tighter">Peak: 14:30 GMT</span>
+</div>
+<div class="flex gap-1 h-32 items-end">
+<div class="flex-1 bg-surface-container-highest h-[40%]"></div>
+<div class="flex-1 bg-surface-container-highest h-[65%]"></div>
+<div class="flex-1 bg-primary-container h-[90%]"></div>
+<div class="flex-1 bg-surface-container-highest h-[55%]"></div>
+<div class="flex-1 bg-surface-container-highest h-[45%]"></div>
+<div class="flex-1 bg-surface-container-highest h-[75%]"></div>
+<div class="flex-1 bg-surface-container-highest h-[30%]"></div>
+</div>
+<div class="flex justify-between">
+<div class="text-center flex-1">
+<span class="block text-2xl font-headline font-black text-on-surface">42</span>
+<span class="block text-[8px] font-headline font-bold uppercase tracking-widest text-outline-variant">Collaborations</span>
+</div>
+<div class="text-center flex-1">
+<span class="block text-2xl font-headline font-black text-on-surface">12k</span>
+<span class="block text-[8px] font-headline font-bold uppercase tracking-widest text-outline-variant">Data Nodes</span>
+</div>
+<div class="text-center flex-1">
+<span class="block text-2xl font-headline font-black text-on-surface">09</span>
+<span class="block text-[8px] font-headline font-bold uppercase tracking-widest text-outline-variant">Frameworks</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-16 flex justify-between items-center border-t border-outline-variant/10 pt-8">
+<div class="flex gap-4">
+<button class="w-10 h-10 border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-10 h-10 border border-outline-variant/30 flex items-center justify-center hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<span class="font-headline text-xs font-bold tracking-widest text-outline-variant">PAG. 164 - 165</span>
+</div>
+</div>
+</section>
+<!-- Archive Index / Quick Access -->
+<section class="mt-24">
+<h2 class="font-headline text-xs font-bold uppercase tracking-[0.4em] text-primary mb-12 border-b border-primary/20 pb-4 inline-block">Archival Records</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="group cursor-pointer">
+<div class="h-1 bg-outline-variant/20 w-full mb-6 group-hover:bg-primary transition-all duration-500"></div>
+<span class="text-[10px] font-headline font-black text-outline-variant uppercase tracking-widest">Exhibit A</span>
+<h3 class="text-xl font-headline font-black mt-2 mb-4 group-hover:text-primary transition-colors">Summit Keynotes</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed font-light">Full transcripts and recorded highlights from the main stage sessions including 'Quantum Shift'.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="h-1 bg-outline-variant/20 w-full mb-6 group-hover:bg-primary transition-all duration-500"></div>
+<span class="text-[10px] font-headline font-black text-outline-variant uppercase tracking-widest">Exhibit B</span>
+<h3 class="text-xl font-headline font-black mt-2 mb-4 group-hover:text-primary transition-colors">Digital Atelier</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed font-light">Raw workshop footage and collaborative whiteboards from the innovation lab tracks.</p>
+</div>
+<div class="group cursor-pointer">
+<div class="h-1 bg-outline-variant/20 w-full mb-6 group-hover:bg-primary transition-all duration-500"></div>
+<span class="text-[10px] font-headline font-black text-outline-variant uppercase tracking-widest">Exhibit C</span>
+<h3 class="text-xl font-headline font-black mt-2 mb-4 group-hover:text-primary transition-colors">Networking Map</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed font-light">Interactive visualization of all connections made during the 72-hour summit period.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-[#434656]/15 bg-[#060e20]">
+<div class="flex flex-col md:flex-row justify-between items-center py-12 px-8 w-full max-w-[1440px] mx-auto gap-6">
+<div class="font-headline font-black text-[#dae2fd] text-xl">Memento</div>
+<div class="flex gap-8">
+<a class="font-body text-sm text-[#dae2fd]/40 hover:text-[#4edea3] transition-colors" href="#">Privacy Policy</a>
+<a class="font-body text-sm text-[#dae2fd]/40 hover:text-[#4edea3] transition-colors" href="#">Terms of Service</a>
+<a class="font-body text-sm text-[#dae2fd]/40 hover:text-[#4edea3] transition-colors" href="#">Contact</a>
+<a class="font-body text-sm text-[#dae2fd]/40 hover:text-[#4edea3] transition-colors" href="#">Press Kit</a>
+</div>
+<p class="font-body text-sm text-[#dae2fd]/50">© 2024 Memento Conference. Architectural Precision.</p>
+</div>
+</footer>
+</body></html>

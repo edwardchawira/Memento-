@@ -1,20 +1,27 @@
 @import "tailwindcss";
 
 @theme {
+  /* ATELIER defaults — overridden at runtime by ThemeProvider for each theme */
   --color-on-surface: #1b1c18;
   --color-surface: #fbf9f2;
   --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #f5f4ed;
   --color-surface-container: #f0eee7;
   --color-surface-container-high: #eae8e1;
+  /* Stitch Memento Summit dark tokens (populated at runtime) */
+  --color-surface-container-highest: #e8e5d9;
   --color-surface-dim: #dcdad3;
   --color-surface-bright: #fbf9f2;
   --color-primary: #735c00;
   --color-primary-container: #d4af37;
   --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
   --color-secondary: #6a5b56;
   --color-secondary-container: #f2ded7;
   --color-on-secondary-container: #70615c;
+  --color-tertiary: #386a20;
+  --color-tertiary-container: #b7f397;
+  --color-on-tertiary-container: #0a2000;
   --color-outline: #7f7663;
   --color-outline-variant: #d0c5af;
   --color-error: #ba1a1a;
@@ -43,6 +50,16 @@
 }
 .paper-texture {
   background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDW799m6VhL3JZpPmwyUBQSOAaVm-82ikvC0E4O4eFNnT_86cfx1fuwgSIrcBX6xE8TSAr6VH5229J2hcyZmmxWrwFZyO4NH-Sabu53pPCsQnp1pXgB4w1cFtNmhEsQzR_qtxZRsVg5g7Bc4VjLQMqpcrGqhW2tgVeZ0VUmOln7jxC51aAvuOkvTGphwYEQml3cSaOjl575iqaClCJg6Svn4KmwA1FXjXmbGABs8tZuwyY43kFbB1cXz-sa-ZLAqtqo17JDXlf4IHc");
+}
+
+/* Stitch Memento Summit — spine gradient used by ConferenceBooklet */
+.spine-gradient-summit {
+  background: linear-gradient(180deg, #2e5bff 0%, #0b1326 60%, #060e20 100%);
+}
+
+/* Stitch summit glow — hero backdrop accent for ConferenceInvite */
+.summit-glow {
+  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(46, 91, 255, 0.15) 0%, transparent 70%);
 }
 
 

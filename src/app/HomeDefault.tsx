@@ -170,28 +170,62 @@ export default function HomeDefault() {
         )}
 
         {/* Hero Section */}
-        <section className="relative h-[716px] flex items-center justify-center overflow-hidden px-6">
-          <div className="absolute inset-0 z-0">
-            <img
-              className="w-full h-full object-cover opacity-60"
-              alt="luxury event venue"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCViL53Txk6nPAn3wOYoP7C7TH6GzK5V8Yp2ZoQLHxBXeJveg7OZe8U4YW4NrYG1nPh9flNXLB6a8KaYO_QtOSr7RaZrcyQ0nKtVwjht9uwM3_CA1CdiAu9bcehJpdLviweXV7q_AwHcXCGJwwFxFUObE3qi7cqgyy63YaI7HVvB0KORg5SlirfnS4xJCdQ74KxA6h6RNsE8ZRtX7t3tu7gHqEKdzCAMNuY8sMRujBK6aXPp13NEJrRGOv8q-TFeGbCq2QdewBqOTY"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#fbf9f2] via-[#fbf9f2]/70 to-[#fbf9f2]/30"></div>
-          </div>
-          <div className="relative z-10 text-center max-w-3xl">
-            <h1 className="font-headline text-6xl md:text-8xl tracking-tight leading-tight mb-8">Host with <span className="italic">Intention</span></h1>
-            <p className="font-body text-lg md:text-xl text-[var(--color-secondary)] mb-12 max-w-xl mx-auto tracking-wide leading-relaxed">
-              Transform your gathering into a digital sanctuary of memories. Create an immersive experience for your guests.
-            </p>
-            <button
-              onClick={scrollToNextStep}
-              className={cn("px-12 py-5 shadow-xl hover:brightness-110 transition-all inline-block uppercase tracking-[0.2em] cursor-pointer border-none", theme.classes.heroPrimaryBtn, theme.fontHeadline, theme.uiShape)}
-            >
-              {completedStep > 0 ? "Continue Setup" : "Create your first event"}
-            </button>
-          </div>
-        </section>
+        {activeTheme === "CONFERENCE" ? (
+          /* Stitch "Memento Summit" hero — matches Conference Guest Invite imagery */
+          <section className="relative h-[716px] flex items-center justify-center overflow-hidden px-6">
+            <div className="absolute inset-0 z-0">
+              <img
+                className="w-full h-full object-cover opacity-50"
+                alt="Abstract deep space visualization with glowing neural network topology"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHhNsXxHOPwwMOWrwtz5mrfnaqg4Ti4kFjN83lD7AL0SR954qqMzSVgtZXnyXROHKPKgjmv6xrQtJSg94mGqY1JdL4tqvbHUhgcgDt9PWUbgys500Hvem9GDNC38YmTNJNPOyH8bJgeuiJb5XDeNdsNgwdRxeE5bRkb54x7cc7xhM_B1nOe0jnYp-h3n3NWaP8jJQfbhSF46BXnPXUUESj7UvLjYPhJL5XTeNRikzD8UuEq-Bc67JdA5K50OtKH4B6HnLvmATYiO8"
+              />
+              {/* Dark gradient overlay matching Stitch dark surface tokens */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1326] via-[#0b1326]/60 to-[#0b1326]/20" />
+              {/* Cobalt radial glow */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_60%,rgba(46,91,255,0.12)_0%,transparent_70%)]" />
+            </div>
+            <div className="relative z-10 text-center max-w-3xl">
+              <span className="inline-block font-headline text-[10px] font-bold tracking-[0.3em] uppercase text-[#b8c3ff] mb-6 px-3 py-1 bg-[#3f465c]/60 backdrop-blur-sm">
+                Future Horizons Summit
+              </span>
+              <h1 className="font-headline text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-8 text-[#dae2fd]">
+                Design the<br /><span className="text-[#2e5bff]">Future</span>
+              </h1>
+              <p className="font-body text-lg md:text-xl text-[#c4c5d9] mb-12 max-w-xl mx-auto leading-relaxed">
+                The architectural blueprint for the next decade of digital governance and cognitive computing. Configure your summit experience.
+              </p>
+              <button
+                onClick={scrollToNextStep}
+                className={cn("px-12 py-5 shadow-2xl shadow-[#2e5bff]/20 hover:brightness-110 active:scale-95 transition-all inline-block uppercase tracking-[0.2em] cursor-pointer border-none", theme.classes.heroPrimaryBtn, theme.fontHeadline, theme.uiShape)}
+              >
+                {completedStep > 0 ? "Continue Setup" : "Configure Summit"}
+              </button>
+            </div>
+          </section>
+        ) : (
+          <section className="relative h-[716px] flex items-center justify-center overflow-hidden px-6">
+            <div className="absolute inset-0 z-0">
+              <img
+                className="w-full h-full object-cover opacity-60"
+                alt="luxury event venue"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCViL53Txk6nPAn3wOYoP7C7TH6GzK5V8Yp2ZoQLHxBXeJveg7OZe8U4YW4NrYG1nPh9flNXLB6a8KaYO_QtOSr7RaZrcyQ0nKtVwjht9uwM3_CA1CdiAu9bcehJpdLviweXV7q_AwHcXCGJwwFxFUObE3qi7cqgyy63YaI7HVvB0KORg5SlirfnS4xJCdQ74KxA6h6RNsE8ZRtX7t3tu7gHqEKdzCAMNuY8sMRujBK6aXPp13NEJrRGOv8q-TFeGbCq2QdewBqOTY"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#fbf9f2] via-[#fbf9f2]/70 to-[#fbf9f2]/30" />
+            </div>
+            <div className="relative z-10 text-center max-w-3xl">
+              <h1 className="font-headline text-6xl md:text-8xl tracking-tight leading-tight mb-8">Host with <span className="italic">Intention</span></h1>
+              <p className="font-body text-lg md:text-xl text-[var(--color-secondary)] mb-12 max-w-xl mx-auto tracking-wide leading-relaxed">
+                Transform your gathering into a digital sanctuary of memories. Create an immersive experience for your guests.
+              </p>
+              <button
+                onClick={scrollToNextStep}
+                className={cn("px-12 py-5 shadow-xl hover:brightness-110 transition-all inline-block uppercase tracking-[0.2em] cursor-pointer border-none", theme.classes.heroPrimaryBtn, theme.fontHeadline, theme.uiShape)}
+              >
+                {completedStep > 0 ? "Continue Setup" : "Create your first event"}
+              </button>
+            </div>
+          </section>
+        )}
 
         {/* Onboarding Flow */}
         <section className="bg-[var(--color-surface-container-low)] py-24" id="onboarding">
