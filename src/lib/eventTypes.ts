@@ -8,6 +8,14 @@ export interface ExtractedData {
   rsvpDeadline: string | null;
   additionalNotes: string | null;
   rawTextBlocks: string[];
+  itineraryItems?: Array<{
+    time: string | null;
+    title: string | null;
+    description: string | null;
+    speakerName?: string | null;
+    location?: string | null;
+    durationMinutes?: number | null;
+  }>;
 }
 
 export interface EventDetails {
@@ -35,6 +43,9 @@ export interface ItineraryItem {
   title: string;
   description: string;
   isActive: boolean;
+  speakerName?: string | null;
+  location?: string | null;
+  durationMinutes?: number | null;
 }
 
 export interface Guest {

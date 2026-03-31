@@ -5,6 +5,9 @@ import { useTheme } from "@/context/ThemeContext";
 import { useEvent } from "@/context/EventContext";
 import { getTheme, cn, ThemeType } from "@/lib/themeMapping";
 import { HotspotType, Hotspot } from "@/lib/eventTypes";
+import { isSupabaseConfigured } from "@/lib/supabase/isConfigured";
+import { createEvent } from "@/lib/supabase/events";
+import { insertItineraryItems } from "@/lib/supabase/itinerary";
 
 // Hotspot icon/label mapping
 const HOTSPOT_META: Record<HotspotType, { icon: string; label: string }> = {
@@ -17,7 +20,7 @@ export default function HomeDefault() {
   const { activeTheme, setTheme } = useTheme();
   const theme = getTheme(activeTheme);
   const {
-    event, setPosterImage, setExtractedData,
+    event, setEventId, setPosterImage, setExtractedData,
     updateEventDetail, markFieldEdited,
     addHotspot, removeHotspot, updateHotspot,
     completedStep, setCompletedStep,
@@ -41,6 +44,10 @@ export default function HomeDefault() {
   const [draggingHotspotType, setDraggingHotspotType] = useState<HotspotType | null>(null);
   const [repositioningId, setRepositioningId] = useState<string | null>(null);
 
+  // Invite sending
+  const [inviteEmails, setInviteEmails] = useState("");
+  const [isSendingInvites, setIsSendingInvites] = useState(false);
+
   // --- Feature 1: Smart CTA Scroll ---
   const scrollToNextStep = () => {
     const refs = [step1Ref, step2Ref, step3Ref, finalStepRef];
@@ -63,6 +70,11 @@ export default function HomeDefault() {
     reader.onload = async (e) => {
       const dataUrl = e.target?.result as string;
       setPosterImage(dataUrl);
+      try {
+        localStorage.setItem("memento_poster_dataurl", dataUrl);
+      } catch {
+        // ignore
+      }
       setCompletedStep(Math.max(completedStep, 1));
       // Trigger AI analysis
       await analyseImage(dataUrl);
@@ -84,6 +96,57 @@ export default function HomeDefault() {
         setExtractedData(data);
         setCompletedStep(Math.max(completedStep, 2));
         triggerToast("Poster analysed successfully");
+
+        // Persist to Supabase (optional / demo-friendly)
+        if (isSupabaseConfigured()) {
+          try {
+            const created = await createEvent({
+              theme: activeTheme,
+              title: data?.eventName ?? null,
+              host_name: data?.hostName ?? null,
+              date_text: data?.date ?? null,
+              time_text: data?.time ?? null,
+              location_text: data?.location ?? null,
+              dress_code_text: data?.dressCode ?? null,
+              rsvp_deadline_text: data?.rsvpDeadline ?? null,
+              additional_notes: data?.additionalNotes ?? null,
+              poster_raw_text: Array.isArray(data?.rawTextBlocks)
+                ? data.rawTextBlocks.join("\n")
+                : null,
+              poster_extracted: data ?? null,
+            });
+            if (created?.id) {
+              setEventId(created.id);
+              localStorage.setItem("memento_event_id", created.id);
+
+              // Persist AI itinerary into Supabase
+              if (Array.isArray(data?.itineraryItems) && data.itineraryItems.length > 0) {
+                const rows = data.itineraryItems
+                  .filter((i: any) => i && (i.title || i.time || i.description))
+                  .map((i: any, idx: number) => ({
+                    event_id: created.id,
+                    position: idx,
+                    starts_at_text: i.time ?? null,
+                    title: i.title ?? "Session",
+                    description: i.description ?? null,
+                    location_text: i.location ?? null,
+                    speaker_name: i.speakerName ?? null,
+                    duration_minutes:
+                      typeof i.durationMinutes === "number" ? i.durationMinutes : null,
+                  }));
+
+                try {
+                  await insertItineraryItems(rows);
+                } catch {
+                  // Non-blocking: keep the onboarding UX smooth even if inserts fail
+                }
+              }
+            }
+          } catch {
+            // Keep UX working even if Supabase isn't reachable / configured correctly
+          }
+        }
+
         // Auto-scroll to Step 2
         setTimeout(() => {
           step2Ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -97,6 +160,46 @@ export default function HomeDefault() {
       triggerToast("Analysis failed — please try again");
     }
     setIsAnalysing(false);
+  };
+
+  const sendInvites = async () => {
+    const eventId = localStorage.getItem("memento_event_id") || event.id;
+    const emails = inviteEmails
+      .split(/[\n,;]/g)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!eventId || emails.length === 0) {
+      triggerToast("Add at least one email address");
+      return;
+    }
+    setIsSendingInvites(true);
+    try {
+      const res = await fetch("/api/send-invites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId, emails }),
+      });
+      if (!res.ok) {
+        triggerToast("Failed to send invites");
+      } else {
+        const json = await res.json().catch(() => null);
+        const sent = Number(json?.sent ?? 0);
+        const skipped = Number(json?.skipped ?? 0);
+        if (sent > 0) {
+          triggerToast(`Sent ${sent} invite${sent === 1 ? "" : "s"}`);
+        } else {
+          const firstErr = json?.sendErrors?.[0]?.message as string | undefined;
+          triggerToast(
+            firstErr
+              ? `Email not sent: ${firstErr}`
+              : `Emails not sent (skipped ${skipped}). Check RESEND_FROM/domain.`
+          );
+        }
+      }
+    } catch {
+      triggerToast("Failed to send invites");
+    }
+    setIsSendingInvites(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -130,8 +233,14 @@ export default function HomeDefault() {
     e.preventDefault();
     if (!posterCanvasRef.current) return;
     const rect = posterCanvasRef.current.getBoundingClientRect();
-    const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+    // Keep the hotspot center inside the poster bounds (more accurate than a fixed % clamp)
+    const hotspotRadiusPx = 26; // ~ half of 52px incl. visual affordances
+    const xPx = clamp(e.clientX - rect.left, hotspotRadiusPx, rect.width - hotspotRadiusPx);
+    const yPx = clamp(e.clientY - rect.top, hotspotRadiusPx, rect.height - hotspotRadiusPx);
+    const xPercent = (xPx / rect.width) * 100;
+    const yPercent = (yPx / rect.height) * 100;
 
     if (repositioningId) {
       updateHotspot(repositioningId, { xPercent, yPercent });
@@ -140,8 +249,8 @@ export default function HomeDefault() {
       addHotspot({
         id: `hs-${Date.now()}`,
         type: draggingHotspotType,
-        xPercent: Math.max(5, Math.min(95, xPercent)),
-        yPercent: Math.max(5, Math.min(95, yPercent)),
+        xPercent,
+        yPercent,
       });
     }
     setDraggingHotspotType(null);
@@ -434,13 +543,27 @@ export default function HomeDefault() {
                         className="absolute group cursor-grab active:cursor-grabbing"
                         style={{ left: `${hs.xPercent}%`, top: `${hs.yPercent}%`, transform: "translate(-50%, -50%)" }}
                       >
-                        <button className={cn("w-12 h-12 flex items-center justify-center transition-all shadow-lg backdrop-blur-md border relative", theme.uiShape, theme.classes.hotspotContainer)}>
+                        <button
+                          type="button"
+                          className={cn(
+                            "w-12 h-12 flex items-center justify-center transition-all shadow-lg backdrop-blur-md border relative",
+                            theme.uiShape,
+                            theme.classes.hotspotContainer
+                          )}
+                        >
                           <span className={cn("material-symbols-outlined text-sm", theme.classes.hotspotIcon)}>{HOTSPOT_META[hs.type].icon}</span>
-                          {/* Delete button */}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); removeHotspot(hs.id); }}
-                            className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border-none cursor-pointer leading-none"
-                          >×</button>
+                        </button>
+                        {/* Delete button (must not be nested in <button/>) */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeHotspot(hs.id);
+                          }}
+                          className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border-none cursor-pointer leading-none"
+                          aria-label={`Remove ${HOTSPOT_META[hs.type].label}`}
+                        >
+                          ×
                         </button>
                         <span className="absolute top-full left-1/2 -translate-x-1/2 mt-1 text-[9px] font-label uppercase tracking-wider text-white bg-black/60 px-2 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                           {HOTSPOT_META[hs.type].label}
@@ -509,7 +632,25 @@ export default function HomeDefault() {
                   </div>
                   <div>
                     <label className="font-label text-sm uppercase tracking-widest text-[var(--color-primary)] mb-2 block">Manual Entry</label>
-                    <textarea className="w-full bg-[var(--color-surface-container-low)] border-none focus:ring-0 font-body text-sm p-4 placeholder:text-[var(--color-outline-variant)] outline-none" placeholder="guest@email.com, another@email.com" rows={3}></textarea>
+                    <textarea
+                      className="w-full bg-[var(--color-surface-container-low)] border-none focus:ring-0 font-body text-sm p-4 placeholder:text-[var(--color-outline-variant)] outline-none"
+                      placeholder="guest@email.com, another@email.com"
+                      rows={3}
+                      value={inviteEmails}
+                      onChange={(e) => setInviteEmails(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={sendInvites}
+                      disabled={isSendingInvites}
+                      className={cn(
+                        "mt-4 w-full px-6 py-4 font-label text-xs uppercase tracking-[0.3em] shadow-lg hover:brightness-110 active:scale-95 transition-all outline-none border-none cursor-pointer inline-block",
+                        theme.classes.heroPrimaryBtn,
+                        isSendingInvites && "opacity-60 cursor-not-allowed"
+                      )}
+                    >
+                      {isSendingInvites ? "Sending…" : "Invite Guests (send RSVP email)"}
+                    </button>
                   </div>
                 </div>
                 <div className="pt-12 flex justify-center">

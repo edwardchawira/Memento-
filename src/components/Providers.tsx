@@ -6,6 +6,7 @@ import { getTheme, cn } from "@/lib/themeMapping";
 import { useEffect } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import QueryProvider from "./QueryProvider";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const { activeTheme } = useTheme();
@@ -37,11 +38,13 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider>
-      <EventProvider>
-        <ThemeWrapper>{children}</ThemeWrapper>
-      </EventProvider>
-    </ThemeProvider>
+    <QueryProvider>
+      <ThemeProvider>
+        <EventProvider>
+          <ThemeWrapper>{children}</ThemeWrapper>
+        </EventProvider>
+      </ThemeProvider>
+    </QueryProvider>
   );
 }
 

@@ -8,6 +8,14 @@ Optional — for real poster analysis with OpenAI, create `.env.local`:
 
 ```env
 OPENAI_API_KEY=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Optional (email invites)
+RESEND_API_KEY=
+RESEND_FROM="Memento <onboarding@resend.dev>"
 ```
 
 If `OPENAI_API_KEY` is unset, `/api/analyze-poster` returns demo placeholder data so the flow still works.

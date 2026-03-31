@@ -7,6 +7,7 @@ import {
 
 interface EventContextType {
   event: MementoEvent;
+  setEventId: (id: string) => void;
   // Poster
   setPosterImage: (image: string) => void;
   setExtractedData: (data: ExtractedData) => void;
@@ -48,6 +49,10 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setShowToast(null), 2500);
   }, []);
 
+  const setEventId = useCallback((id: string) => {
+    setEvent(prev => ({ ...prev, id }));
+  }, []);
+
   const setPosterImage = useCallback((image: string) => {
     setEvent(prev => ({ ...prev, posterImage: image }));
   }, []);
@@ -63,7 +68,29 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
       if (data.dressCode) newDetails.dressCode = data.dressCode;
       if (data.hostName) newDetails.hostName = data.hostName;
       if (data.additionalNotes) newDetails.notes = data.additionalNotes;
-      return { ...prev, extractedData: data, eventDetails: newDetails, aiFieldsEdited: {} };
+      const aiItinerary =
+        Array.isArray(data.itineraryItems) && data.itineraryItems.length > 0
+          ? data.itineraryItems
+              .filter((i) => i && (i.title || i.time || i.description))
+              .map((i, idx) => ({
+                id: `ai-it-${Date.now()}-${idx}`,
+                time: i.time ?? "",
+                title: i.title ?? "Session",
+                description: i.description ?? "",
+                isActive: idx === 0,
+                speakerName: i.speakerName ?? null,
+                location: i.location ?? null,
+                durationMinutes: i.durationMinutes ?? null,
+              }))
+          : null;
+
+      return {
+        ...prev,
+        extractedData: data,
+        eventDetails: newDetails,
+        itinerary: aiItinerary ?? prev.itinerary,
+        aiFieldsEdited: {},
+      };
     });
   }, []);
 
@@ -124,7 +151,7 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <EventContext.Provider value={{
-      event, setPosterImage, setExtractedData,
+      event, setEventId, setPosterImage, setExtractedData,
       updateEventDetail, markFieldEdited,
       addHotspot, removeHotspot, updateHotspot,
       addItineraryItem, updateItineraryItem, removeItineraryItem,
