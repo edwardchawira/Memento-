@@ -66,7 +66,11 @@ export async function POST(req: NextRequest) {
     }
 
     const resend = new Resend(resendKey);
-    const baseUrl = body.appUrl || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl =
+      body.appUrl ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+      "http://localhost:3000";
 
     let sent = 0;
     const sendErrors: Array<{ email: string; message: string }> = [];

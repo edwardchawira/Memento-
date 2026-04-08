@@ -4,19 +4,17 @@ Digital memory booklet: host onboarding, guest invites, and themed UI (Atelier /
 
 ## Environment variables
 
-Optional — for real poster analysis with OpenAI, create `.env.local`:
+Copy `.env.example` to `.env.local` and fill in values. See **Deploy on Vercel** for production.
 
-```env
-OPENAI_API_KEY=
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Optional (email invites)
-RESEND_API_KEY=
-RESEND_FROM="Memento <onboarding@resend.dev>"
-```
+| Variable | Required for | Notes |
+|----------|----------------|-------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase client + server | From Supabase → Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase client | Public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | API routes (guests, invites) | **Server only** — never expose to the browser |
+| `NEXT_PUBLIC_APP_URL` | Invite links in email | **Recommended** for custom domains. On Vercel, `/api/send-invites` falls back to `VERCEL_URL` if unset. |
+| `OPENAI_API_KEY` | `/api/analyze-poster` | Optional — without it, analysis returns demo data |
+| `RESEND_API_KEY` | `/api/send-invites` | Optional — without it, guests are created but email is skipped |
+| `RESEND_FROM` | Resend | Verified domain/sender in Resend |
 
 If `OPENAI_API_KEY` is unset, `/api/analyze-poster` returns demo placeholder data so the flow still works.
 
@@ -55,6 +53,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push this repo to GitHub and [import the project](https://vercel.com/new) in Vercel (framework: Next.js is auto-detected).
+2. Under **Settings → Environment Variables**, add every key from `.env.example` for **Production** (and **Preview** if you want PR previews to hit real backends).
+3. Set **`NEXT_PUBLIC_APP_URL`** to your Vercel URL after the first deploy (e.g. `https://<project>.vercel.app`), or your custom domain. Invite emails use this for links.
+4. Redeploy after changing env vars so serverless functions pick them up.
+5. In **Supabase** → Authentication (or API settings), add your Vercel URL to allowed redirect origins if you use auth callbacks later.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`npm run build` is the production build; Node **20.9+** is declared in `package.json` `engines` for Vercel.
+
+See also: [Next.js on Vercel](https://nextjs.org/docs/app/building-your-application/deploying).
