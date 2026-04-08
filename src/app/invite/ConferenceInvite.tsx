@@ -71,6 +71,8 @@ export default function ConferenceInvite() {
   const [toast, setToast] = useState<string | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [recordingForMs, setRecordingForMs] = useState(0);
+  const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+  const [rsvpBusy, setRsvpBusy] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -97,6 +99,49 @@ export default function ConferenceInvite() {
       if (storedG) setGuestId(storedG);
     }
   }, [event?.id, sp]);
+
+  useEffect(() => {
+    if (!guestId || !eventId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(
+          `/api/guest-rsvp?guestId=${encodeURIComponent(guestId)}&eventId=${encodeURIComponent(eventId)}`
+        );
+        const j = await r.json();
+        if (!cancelled && r.ok && typeof j.rsvp_status === "string") {
+          setRsvpStatus(j.rsvp_status);
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [guestId, eventId]);
+
+  const submitRsvp = async (status: "attending" | "declined") => {
+    if (!guestId || !eventId) {
+      showToast("Open your personalized link from the invite email to RSVP.");
+      return;
+    }
+    setRsvpBusy(true);
+    try {
+      const r = await fetch("/api/guest-rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guestId, eventId, status }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || "RSVP failed");
+      setRsvpStatus(status);
+      showToast(status === "attending" ? "You're attending — welcome!" : "Thanks — we've recorded your decline.");
+    } catch {
+      showToast("Could not update RSVP. Try again.");
+    }
+    setRsvpBusy(false);
+  };
 
   useEffect(() => {
     if (event?.posterImage) return;
@@ -134,7 +179,7 @@ export default function ConferenceInvite() {
         .select("id,created_at,bucket_id,object_path,mime_type,caption,guest_id")
         .eq("event_id", eventId)
         .order("created_at", { ascending: false })
-        .limit(12);
+        .limit(30);
       if (error) throw error;
       return data ?? [];
     },
@@ -429,14 +474,33 @@ export default function ConferenceInvite() {
               The architectural blueprint for the next decade of digital governance and cognitive computing.
               Join the elite cohort shaping tomorrow.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-gradient-to-br from-[#2e5bff] to-[#b8c3ff] text-[#efefff] px-8 py-4 font-headline font-extrabold uppercase text-sm tracking-widest shadow-2xl border-none cursor-pointer active:scale-95 transition-all">
-                Accept Invite
+            <div className="flex flex-wrap gap-4 items-center">
+              <button
+                type="button"
+                disabled={rsvpBusy || rsvpStatus === "attending"}
+                onClick={() => submitRsvp("attending")}
+                className="bg-gradient-to-br from-[#2e5bff] to-[#b8c3ff] text-[#efefff] px-8 py-4 font-headline font-extrabold uppercase text-sm tracking-widest shadow-2xl border-none cursor-pointer active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {rsvpStatus === "attending" ? "You're attending" : "Accept Invite"}
               </button>
-              <button className="border border-[#434656]/30 text-[#dae2fd] px-8 py-4 font-headline font-extrabold uppercase text-sm tracking-widest hover:bg-[#31394d]/20 transition-all bg-transparent cursor-pointer">
-                Decline
+              <button
+                type="button"
+                disabled={rsvpBusy || rsvpStatus === "declined"}
+                onClick={() => submitRsvp("declined")}
+                className="border border-[#434656]/30 text-[#dae2fd] px-8 py-4 font-headline font-extrabold uppercase text-sm tracking-widest hover:bg-[#31394d]/20 transition-all bg-transparent cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {rsvpStatus === "declined" ? "Declined" : "Decline"}
               </button>
             </div>
+            {!guestId ? (
+              <p className="mt-4 text-sm text-[#adb4ce] max-w-md">
+                RSVP is tied to your invite link. Open the email from the host and use &quot;Open RSVP &amp; live invite&quot; so we can save your response.
+              </p>
+            ) : rsvpStatus === "pending" || !rsvpStatus ? (
+              <p className="mt-4 text-xs text-[#c4c5d9]/80 uppercase tracking-widest font-bold">
+                Live itinerary and guest gallery update in real time after you respond.
+              </p>
+            ) : null}
           </div>
 
           {/* Right — Poster Card */}
@@ -528,6 +592,9 @@ export default function ConferenceInvite() {
                 <div className="font-headline text-2xl font-black tracking-tight text-[#dae2fd] mt-2">
                   Recent Guest Uploads
                 </div>
+                <p className="text-sm text-[#c4c5d9] mt-2 max-w-xl">
+                  Everyone on this invite sees the same live feed — photos, voice notes, and videos from all attendees.
+                </p>
               </div>
               <div className="text-xs text-[#c4c5d9] font-bold uppercase tracking-widest">
                 {recentUploads.length} items

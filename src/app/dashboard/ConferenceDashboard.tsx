@@ -1,43 +1,32 @@
-import React from "react";
+"use client";
 
 // Stitch "Conference Host Dashboard (Desktop)" — screen faa1992248b54d529456b10f1e52dca8
 // Project: Digital Memory Booklet (5929816749829680234)
 // Design System: Memento Summit (assets/4f02613b68334037a398ab43ad1932e8)
 
-const MOMENTS = [
-  {
-    tag: "MAIN STAGE",
-    tagStyle: "bg-[#2e5bff] text-[#efefff]",
-    ago: "2m ago",
-    text: '"Incredible insights on the future of neural architecture by Dr. Aris."',
-    handle: "tech_lead_nx",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBZqwl7h_ekIxi6GtZEGe1KmcbIBDWG0X3AxWs8gZ4-HYsHaQQUCdY9q96V9zZpk8LdgdNyn_ehjJMFukLVyzrwtEJs6ONGZUJ1JfhT8ilRp4Yhm2BdQuVA_0Dv126C3_xcR7Jt1wgZECWgL-UFKxxPEOVAJ4-VtPlq09lz-4oLRzQo9qtV6Y4ey0WP-uk-4ACnVreawd4gPB13s-Lrrx5f6rnx7UIp51R8LMgSxCSgxvnK5F22_ymb8CNBWFE9v6sa9ZoQBxpxMyI",
-  },
-  {
-    tag: "NETWORKING",
-    tagStyle: "bg-[#007d55] text-[#bdffdb]",
-    ago: "8m ago",
-    text: "Great turnout at the Innovation Hub mixer this afternoon.",
-    handle: "global_visionary",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHwb_q1QRMhjUqcJzmrBn63rHeuLr-GryX7i3QpqXzGizVXlGQfbCbSYVAGO9CR_hqnhiILRYDIvhN7G4Vf82T89Vr89nzMPGs-faawxVp4cf9gmpPcsvATNnwuUBiFJ2K_Ak9uGV20urDzy7WImwl9xjF-7wIYq5-ruuDaM9lrnftzpha2kWZedBQwLIZwphsL9p4GO8fiexQSOaBX-QEFHkqbiChbI8ncTv5azUs4LyFgzaipWBSSbLQIXDSdEo7qo9wJIKnYY",
-  },
-  {
-    tag: "WORKSHOP",
-    tagStyle: "bg-[#3f465c] text-[#adb4ce]",
-    ago: "15m ago",
-    text: "Hands-on with the new Memento Framework in Hall B.",
-    handle: "dev_ops_sarah",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBe0PJpwyNc4d__ZQC8CrTQNG8yejsOPAYmanSwA6ERd1vshRJvkwjwLd9-SVFegueXIyWvcrJiC9M29v1wFVBG3mU9OJlempK0LzFZ8ijeuhnf_RCvAVZhAhwUoZ5Hs7d49v-pWCAGEa22p3vrKOjlKPQXmNhacvTF3Ar_4w8OaLdkLovwzLcIkuE-q8Z3DjvOZOqq7bnCdh0J3duEmtF0QLnMGodJmI__DAOLm8lB45Z93wNXc1WIcs3Ks88sjI7iXQ4gx3X_TQQ",
-  },
-  {
-    tag: "LOBBY",
-    tagStyle: "bg-[#2d3449] text-[#dae2fd]",
-    ago: "22m ago",
-    text: "The architectural layout this year is stunning. True monolith vibe.",
-    handle: "arch_daily_nexus",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAS1o4_qVZL-HdpU1uaRW78wso0PwFCDcX12a6waKosk4YmrJQyHNFxqk4Jf4P8Q_I96dqcrsS5RA14dvhlio9CiiUWTmIlOmLvuTVQYJGWKyls1mTpBe5WewGeGqZV6cUZ7fCTtAN3y-k9igejNx1kDSIGB8d5RjM9WUuTnhX3TuJcJUsiBTpr5bkivsKtaup99KgpN7Gw1c9DMjM-brwhpQ0nBuWAmrehMbsWtZSb9u74RpYYH3oIaxhQBTnF-ZDbwATmgQHhIcc",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { isSupabaseConfigured } from "@/lib/supabase/isConfigured";
+import { supabase } from "@/lib/supabase/client";
+
+function formatAgo(iso: string) {
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 5) return "just now";
+  if (s < 60) return `${s}s ago`;
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
+
+function tagForUpload(mime: string | null | undefined) {
+  if (!mime) return { label: "UPLOAD", style: "bg-[#3f465c] text-[#adb4ce]" };
+  if (mime.startsWith("image/")) return { label: "PHOTO", style: "bg-[#2e5bff] text-[#efefff]" };
+  if (mime.startsWith("video/")) return { label: "VIDEO", style: "bg-[#b8c3ff]/20 text-[#b8c3ff]" };
+  if (mime.startsWith("audio/")) return { label: "VOICE", style: "bg-[#007d55]/30 text-[#4edea3]" };
+  return { label: "FILE", style: "bg-[#3f465c] text-[#adb4ce]" };
+}
 
 const HISTOGRAM = [40, 65, 85, 100, 70, 55, 45, 30, 20];
 
@@ -49,6 +38,57 @@ const ACTIVITY = [
 ];
 
 export default function ConferenceDashboard() {
+  const qc = useQueryClient();
+  const [eventId, setEventId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const id = localStorage.getItem("memento_event_id");
+      if (id) setEventId(id);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const { data: guestUploads = [] } = useQuery({
+    queryKey: ["uploads", eventId],
+    enabled: Boolean(eventId && isSupabaseConfigured() && supabase),
+    queryFn: async () => {
+      if (!supabase || !eventId) return [];
+      const { data, error } = await supabase
+        .from("uploads")
+        .select("id,created_at,bucket_id,object_path,mime_type,caption,guest_id")
+        .eq("event_id", eventId)
+        .order("created_at", { ascending: false })
+        .limit(24);
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 5_000,
+  });
+
+  useEffect(() => {
+    const client = supabase;
+    if (!client || !eventId) return;
+    const ch = client
+      .channel(`dashboard-uploads:${eventId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "uploads", filter: `event_id=eq.${eventId}` },
+        () => qc.invalidateQueries({ queryKey: ["uploads", eventId] })
+      )
+      .subscribe();
+    return () => {
+      ch.unsubscribe();
+      client.removeChannel(ch);
+    };
+  }, [eventId, qc]);
+
+  const urlFor = (bucket: string | null | undefined, path: string | null | undefined) => {
+    if (!supabase || !bucket || !path) return null;
+    return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+  };
+
   return (
     <div className="pb-20 px-8 max-w-[1440px] mx-auto pt-8">
       {/* Header */}
@@ -120,33 +160,77 @@ export default function ConferenceDashboard() {
           </div>
         </div>
 
-        {/* Summit Moments Live Feed */}
+        {/* Guest uploads — same event feed as invite page, realtime */}
         <div className="md:col-span-8 bg-[#131b2e] rounded-lg p-1">
-          <div className="p-6 flex justify-between items-center border-b border-[#434656]/10">
+          <div className="p-6 flex flex-wrap justify-between items-center gap-4 border-b border-[#434656]/10">
             <div className="flex items-center gap-3">
               <span className="flex h-2 w-2 rounded-full bg-[#4edea3] animate-pulse" />
-              <h3 className="font-headline font-bold text-lg text-[#dae2fd]">Summit Moments</h3>
-            </div>
-            <span className="text-xs font-headline font-bold text-[#c4c5d9] uppercase tracking-widest">Live Stream</span>
-          </div>
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {MOMENTS.map((m) => (
-              <div key={m.handle} className="group relative overflow-hidden rounded-sm bg-[#060e20]">
-                <img
-                  alt={m.tag}
-                  className="w-full h-64 object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                  src={m.img}
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0b1326] to-transparent">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`text-[10px] px-2 py-0.5 font-bold rounded-sm ${m.tagStyle}`}>{m.tag}</span>
-                    <span className="text-xs text-[#dae2fd]/60">{m.ago}</span>
-                  </div>
-                  <p className="text-sm font-medium text-[#dae2fd]">{m.text}</p>
-                  <span className="text-xs text-[#b8c3ff] font-bold mt-2 block">@{m.handle}</span>
-                </div>
+              <div>
+                <h3 className="font-headline font-bold text-lg text-[#dae2fd]">Summit Moments</h3>
+                <p className="text-xs text-[#c4c5d9] mt-1 max-w-md">
+                  Live guest photos, voice notes, and videos from the invite link — same feed guests see on RSVP.
+                </p>
               </div>
-            ))}
+            </div>
+            <span className="text-xs font-headline font-bold text-[#c4c5d9] uppercase tracking-widest">
+              {guestUploads.length} live
+            </span>
+          </div>
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[200px]">
+            {!eventId || !isSupabaseConfigured() || !supabase ? (
+              <div className="col-span-full text-sm text-[#c4c5d9] py-8 text-center">
+                Connect Supabase and open the dashboard after creating an event so guest uploads appear here.
+              </div>
+            ) : guestUploads.length === 0 ? (
+              <div className="col-span-full text-sm text-[#c4c5d9] py-8 text-center">
+                No uploads yet. Invited guests can add photos, voice, and video from their RSVP link — they will show up here in real time.
+              </div>
+            ) : (
+              guestUploads.map((u: any) => {
+                const tag = tagForUpload(u.mime_type);
+                const url = urlFor(u.bucket_id, u.object_path);
+                const isImage = typeof u.mime_type === "string" && u.mime_type.startsWith("image/");
+                const isVideo = typeof u.mime_type === "string" && u.mime_type.startsWith("video/");
+                const isAudio = typeof u.mime_type === "string" && u.mime_type.startsWith("audio/");
+                const ago = u.created_at ? formatAgo(u.created_at) : "";
+                return (
+                  <div key={u.id} className="group relative overflow-hidden rounded-sm bg-[#060e20] border border-[#434656]/10">
+                    {url && isImage ? (
+                      <img
+                        alt={u.caption || "Guest upload"}
+                        className="w-full h-64 object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                        src={url}
+                      />
+                    ) : url && isVideo ? (
+                      <video className="w-full h-64 object-cover bg-black" src={url} controls playsInline />
+                    ) : (
+                      <div className="w-full h-64 flex flex-col items-center justify-center gap-3 text-[#c4c5d9] bg-[#060e20]">
+                        <span className="material-symbols-outlined text-5xl text-[#b8c3ff]">
+                          {isAudio ? "graphic_eq" : "attach_file"}
+                        </span>
+                        {url && isAudio ? <audio src={url} controls className="max-w-[90%]" /> : null}
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#0b1326] to-transparent">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-[10px] px-2 py-0.5 font-bold rounded-sm ${tag.style}`}>{tag.label}</span>
+                        <span className="text-xs text-[#dae2fd]/60">{ago}</span>
+                      </div>
+                      <p className="text-sm font-medium text-[#dae2fd] line-clamp-2">
+                        {u.caption || (isAudio ? "Voice note" : isVideo ? "Video" : "Guest moment")}
+                      </p>
+                      {u.guest_id ? (
+                        <span className="text-[10px] text-[#b8c3ff]/80 font-mono mt-2 block truncate">
+                          guest {String(u.guest_id).slice(0, 8)}…
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-[#c4c5d9]/70 mt-2 block">Anonymous upload</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>

@@ -33,20 +33,28 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Create guest rows first (so we can deep-link with guestId)
-    const { data: guests, error: guestErr } = await admin
-      .from("guests")
-      .insert(
-        emails.map((email) => ({
-          event_id: eventId,
-          email,
-          rsvp_status: "pending",
-        }))
-      )
-      .select("id,email");
-
-    if (guestErr) {
-      return NextResponse.json({ error: guestErr.message }, { status: 500 });
+    // One row per email (skip duplicates for this event so re-sends still work)
+    const guests: { id: string; email: string }[] = [];
+    for (const email of emails) {
+      const { data: existing } = await admin
+        .from("guests")
+        .select("id,email")
+        .eq("event_id", eventId)
+        .eq("email", email)
+        .maybeSingle();
+      if (existing) {
+        guests.push(existing);
+        continue;
+      }
+      const { data: inserted, error: insErr } = await admin
+        .from("guests")
+        .insert({ event_id: eventId, email, rsvp_status: "pending" })
+        .select("id,email")
+        .single();
+      if (insErr) {
+        return NextResponse.json({ error: insErr.message }, { status: 500 });
+      }
+      if (inserted) guests.push(inserted);
     }
 
     const resendKey = process.env.RESEND_API_KEY;
@@ -70,17 +78,22 @@ export async function POST(req: NextRequest) {
       const { error } = await resend.emails.send({
         from: resendFrom,
         to: [g.email],
-        subject: "You’re invited — RSVP",
+        subject: "RSVP — your invite, live itinerary & guest gallery",
         html: `
-          <div style="font-family:ui-sans-serif,system-ui,-apple-system;line-height:1.6">
+          <div style="font-family:ui-sans-serif,system-ui,-apple-system;line-height:1.6;color:#111827">
             <h2 style="margin:0 0 12px 0">You’re invited</h2>
-            <p style="margin:0 0 16px 0">Tap below to RSVP and access the live itinerary.</p>
+            <p style="margin:0 0 12px 0">Open your personal link to:</p>
+            <ul style="margin:0 0 16px 18px;padding:0">
+              <li>RSVP (Accept or Decline)</li>
+              <li>See the <strong>live itinerary</strong> — updates appear as the host makes changes</li>
+              <li>Share <strong>photos, voice notes, and short videos</strong> — visible to other guests on the same invite experience and on the host dashboard</li>
+            </ul>
             <p style="margin:0 0 24px 0">
-              <a href="${link}" style="display:inline-block;background:#2e5bff;color:#fff;text-decoration:none;padding:12px 18px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px">
-                Open Invite
+              <a href="${link}" style="display:inline-block;background:#2e5bff;color:#fff;text-decoration:none;padding:12px 18px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px;border-radius:4px">
+                Open RSVP &amp; live invite
               </a>
             </p>
-            <p style="margin:0;color:#6b7280;font-size:12px">If the button doesn’t work, open: ${link}</p>
+            <p style="margin:0;color:#6b7280;font-size:12px">If the button doesn’t work, copy this URL into your browser:<br/>${link}</p>
           </div>
         `,
       });
