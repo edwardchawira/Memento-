@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeResendFrom, resendErrorMessage } from "@/lib/resendFrom";
 
 type Body = {
   eventId: string;
   emails: string[];
   appUrl?: string;
 };
+
+function normalizeBaseUrl(url: string) {
+  const u = url.trim().replace(/\/+$/, "");
+  return u || "http://localhost:3000";
+}
 
 function uniqNormalizedEmails(emails: string[]) {
   const out: string[] = [];
@@ -57,20 +63,26 @@ export async function POST(req: NextRequest) {
       if (inserted) guests.push(inserted);
     }
 
-    const resendKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM;
+    const resendKey = process.env.RESEND_API_KEY?.trim();
+    const resendFromRaw = process.env.RESEND_FROM;
 
     // If Resend isn't configured, still return created guests.
-    if (!resendKey || !resendFrom) {
-      return NextResponse.json({ guests, sent: 0, skipped: emails.length }, { status: 200 });
+    if (!resendKey || !resendFromRaw?.trim()) {
+      return NextResponse.json(
+        { guests, sent: 0, skipped: emails.length, resendFromUsed: null as string | null },
+        { status: 200 }
+      );
     }
 
+    const resendFrom = normalizeResendFrom(resendFromRaw);
+
     const resend = new Resend(resendKey);
-    const baseUrl =
+    const baseUrl = normalizeBaseUrl(
       body.appUrl ||
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-      "http://localhost:3000";
+        process.env.NEXT_PUBLIC_APP_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+        "http://localhost:3000"
+    );
 
     let sent = 0;
     const sendErrors: Array<{ email: string; message: string }> = [];
@@ -105,14 +117,23 @@ export async function POST(req: NextRequest) {
       if (!error) {
         sent += 1;
       } else {
-        const msg = typeof (error as any)?.message === "string" ? (error as any).message : "Resend error";
+        let msg = resendErrorMessage(error);
+        if (/not verified|domain/i.test(msg)) {
+          msg += ` (From header used: ${resendFrom})`;
+        }
         sendErrors.push({ email: g.email, message: msg });
-        console.error("[send-invites] resend error", { email: g.email, message: msg });
+        console.error("[send-invites] resend error", { email: g.email, message: msg, from: resendFrom });
       }
     }
 
     return NextResponse.json(
-      { guests, sent, skipped: (guests?.length ?? 0) - sent, sendErrors },
+      {
+        guests,
+        sent,
+        skipped: (guests?.length ?? 0) - sent,
+        sendErrors,
+        resendFromUsed: resendFrom,
+      },
       { status: 200 }
     );
   } catch (e: any) {

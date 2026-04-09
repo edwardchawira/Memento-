@@ -174,26 +174,47 @@ export default function HomeDefault() {
     }
     setIsSendingInvites(true);
     try {
+      const appUrl = typeof window !== "undefined" ? window.location.origin : undefined;
       const res = await fetch("/api/send-invites", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, emails }),
+        body: JSON.stringify({ eventId, emails, appUrl }),
       });
+      const json = (await res.json().catch(() => null)) as {
+        error?: string;
+        sent?: number;
+        skipped?: number;
+        sendErrors?: { email: string; message: string }[];
+        resendFromUsed?: string | null;
+      } | null;
+
       if (!res.ok) {
-        triggerToast("Failed to send invites");
+        const msg =
+          typeof json?.error === "string" && json.error.length > 0
+            ? json.error
+            : `Request failed (${res.status})`;
+        triggerToast(msg);
       } else {
-        const json = await res.json().catch(() => null);
         const sent = Number(json?.sent ?? 0);
         const skipped = Number(json?.skipped ?? 0);
         if (sent > 0) {
           triggerToast(`Sent ${sent} invite${sent === 1 ? "" : "s"}`);
         } else {
-          const firstErr = json?.sendErrors?.[0]?.message as string | undefined;
-          triggerToast(
-            firstErr
-              ? `Email not sent: ${firstErr}`
-              : `Emails not sent (skipped ${skipped}). Check RESEND_FROM/domain.`
-          );
+          const firstErr = json?.sendErrors?.[0]?.message;
+          const fromUsed = json?.resendFromUsed;
+          if (firstErr) {
+            const fromHint =
+              fromUsed && /not verified|domain/i.test(firstErr)
+                ? ` Check Resend → Domains (verified) and that Vercel RESEND_API_KEY is from that same team. Sending as: ${fromUsed}`
+                : fromUsed
+                  ? ` Sending as: ${fromUsed}`
+                  : "";
+            triggerToast(`Email not sent: ${firstErr}${fromHint}`);
+          } else {
+            triggerToast(
+              `Emails not sent (skipped ${skipped}). Add RESEND_API_KEY and RESEND_FROM in Vercel, or check domain verification in Resend.`
+            );
+          }
         }
       }
     } catch {
